@@ -1,0 +1,23 @@
+server:
+  port:8080
+spring:
+  application:
+    name: spring-gateway
+  cloud:
+    gateway:
+       routes:
+         - id: path_route1
+           uri: https://wwww.baidu.com
+           predicates:
+             - Path=/get/**
+           filters:
+             - StripPrefix=1
+             - AddRequestParameter=foo, bar
+             - AddResponseHeader=X-Response-Foo, Bar
+
+         - id: after_route
+           uri: http://example.org
+           predicates:
+             - After=2017-01-20T17:42:47.789-07:00[America/Denver]
+
+
