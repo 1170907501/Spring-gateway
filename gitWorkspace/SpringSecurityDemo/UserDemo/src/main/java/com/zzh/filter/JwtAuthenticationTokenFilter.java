@@ -2,6 +2,7 @@ package com.zzh.filter;
 
 import com.zzh.utils.JWTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -26,6 +27,7 @@ import java.util.Map;
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter{
 
     @Autowired
+    @Lazy
     private UserDetailsService userDetailsService;
 
     @Override
@@ -50,7 +52,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter{
         String token = tokenValue.substring("bearer ".length());
         Map<String, Object> map = JWTUtils.parseToken(token);
         // 2.2 取出token中的过期时间，调用JWT工具中封装的过期时间校验，如果token已经过期，则删除登录的用户，继续往下走其他filter逻辑
-        if (JWTUtils.isExpiresIn((long) map.get("expiresIn"))) {
+        if (JWTUtils.isExpiresIn(Long.valueOf(String.valueOf(map.get("exp"))))) {
             // token 已经过期
             SecurityContextHolder.getContext().setAuthentication(null);
             filterChain.doFilter(request, response);

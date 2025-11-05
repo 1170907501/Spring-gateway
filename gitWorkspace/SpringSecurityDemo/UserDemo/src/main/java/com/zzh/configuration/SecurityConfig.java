@@ -31,10 +31,10 @@ import org.springframework.stereotype.Service;
 public class SecurityConfig {
 
     @Autowired // 字段注入
-    @Lazy
     private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
     @Autowired // 字段注入
     private JwtRefreshFilter jwtRefreshFilter;
+
     /**
      * 配置用户信息
      * @return
@@ -88,8 +88,8 @@ public class SecurityConfig {
                 .failureHandler(new LoginFailureHandler())
 
         )// 添加JWT登录过滤器，在登录之前获取token并校验
-        .addFilterBefore(new JwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class)
-        .addFilterAfter(new JwtRefreshFilter(), JwtAuthenticationTokenFilter.class); // 确保JWT过滤器已注册顺序
+        .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterAfter(jwtRefreshFilter, JwtAuthenticationTokenFilter.class); // 确保JWT过滤器已注册顺序
 
         // 对请求进行访问控制设置
         /*http.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
