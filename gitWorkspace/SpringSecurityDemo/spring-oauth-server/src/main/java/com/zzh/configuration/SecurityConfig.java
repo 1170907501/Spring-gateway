@@ -1,4 +1,4 @@
-package com.zzh.configuration;
+/*package com.zzh.configuration;
 
 import com.zzh.filter.JwtAuthenticationTokenFilter;
 import com.zzh.filter.JwtRefreshFilter;
@@ -35,10 +35,10 @@ public class SecurityConfig {
     @Autowired // 字段注入
     private JwtRefreshFilter jwtRefreshFilter;
 
-    /**
+    *//**
      * 配置用户信息
      * @return
-     */
+     *//*
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -92,11 +92,11 @@ public class SecurityConfig {
         .addFilterAfter(jwtRefreshFilter, JwtAuthenticationTokenFilter.class); // 确保JWT过滤器已注册顺序
 
         // 对请求进行访问控制设置
-        /*http.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
+        *//*http.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
                 // 设置哪些路径可以直接访问，不需要认证
                 .requestMatchers("/login.html","/user/login").permitAll()
                 .anyRequest().authenticated() // 其他路径的请求都需要认证
-        );*/
+        );*//*
 
 
         http.authorizeHttpRequests(auth -> auth
@@ -127,5 +127,5 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager() {
         return new ProviderManager(daoAuthenticationProvider()); // 注入自定义Provider
     }
-}
+}*/
 
