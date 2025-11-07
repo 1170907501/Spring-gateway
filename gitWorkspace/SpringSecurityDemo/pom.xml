@@ -4,6 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.4.10</version>
+        <relativePath/> <!-- 明确指定不使用相对路径 -->
+    </parent>
+
     <groupId>com.zzh</groupId>
     <artifactId>SpringSecurityDemo</artifactId>
     <packaging>pom</packaging>
@@ -12,24 +19,57 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <modules>
         <module>spring-oauth-client</module>
         <module>spring-oauth-server</module>
+        <module>resource-server</module>
+        <module>spring-oauth-client-order</module>
+        <module>spring-oauth-client-product</module>
     </modules>
 
     <build>
         <plugins>
+            <!-- 清理插件（兼容Maven 3.6.2） -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.1.0</version> <!-- 降级至3.6.2兼容版本 -->
+            </plugin>
+
+            <!-- 测试插件（兼容Maven 3.6.2） -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version> <!-- 降级至3.6.2兼容版本 -->
+            </plugin>
+
+            <!-- JAR打包插件（兼容Maven 3.6.2） -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.2</version> <!-- 降级至3.6.2兼容版本 -->
+            </plugin>
+
+            <!-- 编译插件（支持JDK17） -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.10.1</version> <!-- 保持JDK17兼容性 -->
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>17</source>
+                    <target>17</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
+            </plugin>
+
+            <!-- Spring Boot插件（需匹配项目版本） -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.7.18</version> <!-- 兼容JDK17的LTS版本 -->
             </plugin>
         </plugins>
     </build>

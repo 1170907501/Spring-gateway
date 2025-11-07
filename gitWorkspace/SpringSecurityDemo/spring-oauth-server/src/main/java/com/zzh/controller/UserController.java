@@ -8,13 +8,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/user")
 public class UserController {
 
     private DBUserDetailService dbUserDetailService;
 
-    @PostMapping("/login")
+    @PostMapping("/user/login")
     public void demo() {
+        dbUserDetailService.loadUserByUsername("jay");
+    }
+    @PostMapping("/login")
+    public void demoLogin() {
         dbUserDetailService.loadUserByUsername("jay");
     }
 }

@@ -1,3 +1,4 @@
+/*
 package com.zzh.filter;
 import com.zzh.dto.TokenPair;
 import com.zzh.service.DBUserDetailService;
@@ -115,10 +116,12 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
                 TimeUnit.MILLISECONDS);
     }
 
-    /**
+    */
+/**
      * 清除当前安全上下文（包括Token过期/无效场景）
      * 遵循"深度清理"原则确保无残留认证信息
-     */
+     *//*
+
     public static void clearAuthentication(HttpServletRequest request) {
         // 1. 清除线程绑定安全上下文（核心操作）
         SecurityContextHolder.clearContext();
@@ -130,3 +133,4 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
         );
     }
 }
+*/

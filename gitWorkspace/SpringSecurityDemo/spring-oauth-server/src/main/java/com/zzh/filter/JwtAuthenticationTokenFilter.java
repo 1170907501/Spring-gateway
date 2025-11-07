@@ -1,3 +1,4 @@
+/*
 package com.zzh.filter;
 
 import com.zzh.utils.JWTUtils;
@@ -73,6 +74,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter{
     }
     // 定义放行路径
     private boolean isPublicPath(String uri) {
-        return uri.equals("/login.html") || uri.equals("/user/login")||uri.equals("http://www.baidu.com");
+        return true;
+        //return uri.equals("/login.html") || uri.equals("/user/login")||uri.equals("http://spring-oauth-server:8888");
     }
 }
+*/

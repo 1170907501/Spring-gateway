@@ -1,9 +1,9 @@
 server:
-  port: 8000
+  port: 8001
 
 spring:
   application:
-    name: spring-oauth-client
+    name: spring-oauth-client-order
   security:
     oauth2:
       client:
@@ -31,7 +31,7 @@ spring:
             authorization-grant-type: authorization_code
             #回调地址，接收认证服务器回传code的接口地址，之前我们是使用http://www.baidu.com代替
             # 注意：和认证服务器配置的回调地址要一致
-            redirect-uri: http://spring-oauth-client:8000/login/oauth2/code/oidc-client
+            redirect-uri: http://spring-oauth-client-order:8001/login/oauth2/code/oidc-client
             scope:
               - profile
               - openid

@@ -17,7 +17,13 @@ spring:
       password: 123456 # 密码
       roles: # 拥有角色
         - admin
-# 基础配置
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/oauth-server?serverTimezone=UTC&userUnicode=true&characterEncoding=utf-8
+    username: root
+    password: root
+    type: com.zaxxer.hikari.HikariDataSource
+  # 基础配置
   data:
     redis:
       host: localhost
