@@ -1,10 +1,8 @@
 
 package com.zzh.controller;
 
-import com.zzh.service.DBUserDetailService;
-import org.springframework.web.bind.annotation.GetMapping;
+import com.zzh.service.impl.DBUserDetailService;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController

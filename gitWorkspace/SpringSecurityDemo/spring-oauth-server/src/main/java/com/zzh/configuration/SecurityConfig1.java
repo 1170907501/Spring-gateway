@@ -1,4 +1,5 @@
 
+
 package com.zzh.configuration;
 
 import com.nimbusds.jose.jwk.JWKSet;
@@ -6,10 +7,16 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.zzh.service.impl.SysUserServiceImpl;
+import com.zzh.service.impl.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -49,12 +56,17 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.UUID;
 
 
+
 /**
  * https://docs.spring.io/spring-authorization-server/docs/current/reference/html/getting-started.html
  */
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig1 {
+
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
 
     /**
      *  Spring Authorization Server 相关配置
@@ -67,27 +79,41 @@ public class SecurityConfig1 {
     @Order(1)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http)
             throws Exception {
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-                //开启OpenID Connect 1.0（其中oidc为OpenID Connect的缩写）
-                .oidc(Customizer.withDefaults());  // Enable OpenID Connect 1.0
+        OAuth2AuthorizationServerConfigurer authorizationServerConfigurer =
+                new OAuth2AuthorizationServerConfigurer();
+
+        // 手动配置授权服务器，替代弃用的 applyDefaultSecurity
+        http.securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
+                .authorizeHttpRequests(authorizeRequests ->
+                        authorizeRequests.anyRequest().authenticated()
+                )
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers(authorizationServerConfigurer.getEndpointsMatcher())
+                )
+                .apply(authorizationServerConfigurer);
+
+        // 开启 OpenID Connect 1.0 支持
+        authorizationServerConfigurer.oidc(oidc -> oidc
+                .userInfoEndpoint(Customizer.withDefaults())
+                .clientRegistrationEndpoint(Customizer.withDefaults())
+        );
+
         http
-                // Redirect to the login page when not authenticated from the
-                // authorization endpoint
-                //将需要认证的请求，重定向到login进行登录认证。
+                // 重定向到登录页面
                 .exceptionHandling((exceptions) -> exceptions
                         .defaultAuthenticationEntryPointFor(
                                 new LoginUrlAuthenticationEntryPoint("/login"),
                                 new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                         )
                 )
-                // Accept access tokens for User Info and/or Client Registration
-                // 使用jwt处理接收到的access token
+                // 配置 JWT 资源服务器
                 .oauth2ResourceServer((resourceServer) -> resourceServer
-                        .jwt(Customizer.withDefaults()));
+                        .jwt(Customizer.withDefaults())
+                );
 
         return http.build();
     }
+
 
     /**
      *  Spring Security 过滤链配置（此处是纯Spring Security相关配置）
@@ -106,11 +132,13 @@ public class SecurityConfig1 {
         return http.build();
     }
 
+
     /**
      * 设置用户信息，校验用户名、密码
      * @return
      */
-    @Bean
+
+    /*@Bean
     public UserDetailsService userDetailsService() {
         UserDetails userDetails = User.withUsername("fox")
                 .password(passwordEncoder().encode("123456"))
@@ -118,13 +146,14 @@ public class SecurityConfig1 {
                 .build();
         //基于内存的用户数据校验
         return new InMemoryUserDetailsManager(userDetails);
-    }
+    }*/
 
     // 3. 配置DaoAuthenticationProvider
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService());
+        //provider.setUserDetailsService(userDetailsService());
+        provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
@@ -136,9 +165,10 @@ public class SecurityConfig1 {
     }
     @Bean
     public PasswordEncoder passwordEncoder(){
-        return NoOpPasswordEncoder.getInstance();  // 不加密
-        //return new BCryptPasswordEncoder(); // 加密方式bcrypt
+        //return NoOpPasswordEncoder.getInstance();  // 不加密
+        return new BCryptPasswordEncoder(); // 加密方式bcrypt
     }
+
 
     /**
      * 注册客户端信息
@@ -150,7 +180,8 @@ public class SecurityConfig1 {
      * http://localhost:9000/oauth2/authorize?response_type=code&client_id=oidc-client&scope=profile&redirect_uri=http://www.baidu.com
      *
      */
-    @Bean
+
+    /*@Bean
     public RegisteredClientRepository registeredClientRepository() {
         RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId("oidc-client")
@@ -171,12 +202,14 @@ public class SecurityConfig1 {
 
         //配置基于内存的客户端信息
         return new InMemoryRegisteredClientRepository(oidcClient);
-    }
+    }*/
+
 
     /**
      * 配置 JWK，为JWT(id_token)提供加密密钥，用于加密/解密或签名/验签
      * JWK详细见：https://datatracker.ietf.org/doc/html/draft-ietf-jose-json-web-key-41
      */
+
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
         KeyPair keyPair = generateRsaKey();
@@ -190,9 +223,11 @@ public class SecurityConfig1 {
         return new ImmutableJWKSet<>(jwkSet);
     }
 
+
     /**
      *  生成RSA密钥对，给上面jwkSource() 方法的提供密钥对
      */
+
     private static KeyPair generateRsaKey() {
         KeyPair keyPair;
         try {
@@ -206,6 +241,7 @@ public class SecurityConfig1 {
         return keyPair;
     }
 
+
     /**
      * 配置jwt解析器
      */
@@ -213,6 +249,7 @@ public class SecurityConfig1 {
     public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
         return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
     }
+
 
     /**
      * 配置认证服务器请求地址
@@ -223,31 +260,40 @@ public class SecurityConfig1 {
         return AuthorizationServerSettings.builder().build();
     }
 
+
     /**
      * 客户端信息
      * 对应表：oauth2_registered_client
-     */
-   /* @Bean
+   */
+    @Bean
+    @Primary
     public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate) {
         return new JdbcRegisteredClientRepository(jdbcTemplate);
     }
 
 
-    *//**
+
+
+    /**
      * 授权信息
      * 对应表：oauth2_authorization
-     *//*
+     */
+
     @Bean
     public OAuth2AuthorizationService authorizationService(JdbcTemplate jdbcTemplate, RegisteredClientRepository registeredClientRepository) {
         return new JdbcOAuth2AuthorizationService(jdbcTemplate, registeredClientRepository);
     }
 
-    *//**
+
+
+    /**
      * 授权确认
      *对应表：oauth2_authorization_consent
-     *//*
+     */
     @Bean
-    public OAuth2AuthorizationConsentService authorizationConsentService(JdbcTemplate jdbcTemplate, RegisteredClientRepository registeredClientRepository) {
+    public OAuth2AuthorizationConsentService authorizationConsentService(JdbcTemplate jdbcTemplate,  RegisteredClientRepository registeredClientRepository) {
         return new JdbcOAuth2AuthorizationConsentService(jdbcTemplate, registeredClientRepository);
-    }*/
+    }
+
 }
+

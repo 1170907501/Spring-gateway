@@ -1,4 +1,4 @@
-package com.zzh.service;
+package com.zzh.service.impl;
 
 import com.zzh.dto.TokenPair;
 import com.zzh.utils.JWTUtils;

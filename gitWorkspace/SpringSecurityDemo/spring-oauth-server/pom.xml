@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.zzh</groupId>
-    <artifactId>spring-oatuh-server</artifactId>
+    <artifactId>spring-oauth-server</artifactId>
 
     <parent>
         <groupId>com.zzh</groupId>
@@ -41,12 +41,12 @@
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-jackson</artifactId>
+            <artifactId>jjwt-jmyackson</artifactId>
             <version>0.11.5</version>
             <scope>runtime</scope>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -62,15 +62,37 @@
             <artifactId>spring-boot-starter-oauth2-authorization-server</artifactId>
         </dependency>
         <!-- MySQL 8.x+ -->
-        <dependency>
+        <!--<dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.39</version> <!-- 根据实际版本调整 -->
-        </dependency>
+            <version>5.1.39</version> &lt;!&ndash; 根据实际版本调整 &ndash;&gt;
+        </dependency>-->
         <!-- Spring Boot JDBC支持 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
+        <!--lombok-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <!--mysql-->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+        </dependency>
+        <!-- mybatis-plus 3.5.3及以上版本 才支持 spring boot 3-->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.5.3.1</version>
+        </dependency>
+        <!-- 添加spring security cas支持 -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-cas</artifactId>
         </dependency>
     </dependencies>
 

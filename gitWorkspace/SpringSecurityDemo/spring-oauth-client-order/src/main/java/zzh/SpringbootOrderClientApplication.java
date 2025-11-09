@@ -1,12 +1,13 @@
-package com.zzh;
+
+package zzh;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringbootUserApplication {
+public class SpringbootOrderClientApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringbootUserApplication.class, args);
+        SpringApplication.run(SpringbootOrderClientApplication.class, args);
     }
 }
